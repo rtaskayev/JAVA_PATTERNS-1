@@ -1,37 +1,51 @@
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
 
-        Person mom = new PersonBuilder()
-                .setName("Анна")
-                .setSurname("Вольф")
-                .setAge(31)
-                .setAddress("Сидней")
-                .build();
+        Logger logger = Logger.getInstance();
+        logger.log("Запускаем программу");
+        logger.log("Просим пользователя ввести входные данные для списка");
 
-        System.out.println(mom);
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
-        Person son = mom.newChildBuilder()
-                .setName("Антошка")
-                .setSurname("Вольф")
-                .build();
+        System.out.print("Введите размер списка: ");
+        Integer listSize = Integer.valueOf(reader.readLine());
+        System.out.print("Введите верхнюю границу для значений: ");
+        Integer maxValue = Integer.valueOf(reader.readLine());
 
-        System.out.println("У " + mom + " есть сын, " + son);
+        List<Integer> randomArray = fillList(listSize, maxValue);
+        System.out.println("Вот случайный список: " + randomArray);
 
-        try {
-            // Не хватает обяхательных полей
-            new PersonBuilder().build();
-        } catch (IllegalStateException e) {
-            e.printStackTrace();
-        }
+        logger.log("Просим пользователя ввести входные данные для фильтрации");
 
-        try {
-            // Возраст недопустимый
-            new PersonBuilder().setAge(-100).build();
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        }
+        System.out.print("Введите порог для фильтра: ");
+        Integer treshold = Integer.valueOf(reader.readLine());
 
-        System.out.println(mom.hashCode());
+        Filter filter = new Filter(treshold);
 
+        List<Integer> resultArray = filter.filterOut(randomArray);
+
+        System.out.println("Отфильтрованный список: " + resultArray);
+        logger.log("Завершаем программу");
     }
+
+    public static List<Integer> fillList(int size, int maxValue) {
+
+        Logger logger = Logger.getInstance();
+        Random random = new Random();
+        List<Integer> listArray = new ArrayList<>();
+
+        logger.log("Создаём и наполняем список");
+        for (int i = 0; i < size; i++) {
+            listArray.add(random.nextInt(maxValue));
+        }
+        return listArray;
+    }
+
 }
